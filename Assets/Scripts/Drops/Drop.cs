@@ -24,5 +24,15 @@ namespace GamePlay.Drops
             transform.SetParent(_tile.transform, false);
             transform.localPosition = Vector3.zero;
         }
+
+        public void RemoveSelf()
+        {
+            _tile = null;
+            Color = null;
+            _rend.sprite = null;
+
+            Destroy(gameObject);
+            //TODO: Add To Pool
+        }
     }
 }

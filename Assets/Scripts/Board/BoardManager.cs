@@ -1,22 +1,27 @@
 using GamePlay.Colors;
+using GamePlay.Drops;
+using GamePlay.Events;
 using GamePlay.Factory;
-using System.Collections;
+using System;
 using UnityEngine;
 
 namespace GamePlay.Board
 {
+    [DefaultExecutionOrder(0)]
     public class BoardManager : MonoBehaviour
     {
-        [field: SerializeField] public int Width { get; private set; }
-        [field: SerializeField] public int Height { get; private set; }
+
+        [SerializeField] private BoardData Data;
+
+        public int Width => Data.Width;
+        public int Height => Data.Height;
 
         private Tile[,] _tiles;
 
         private DropFactory _dropFactory;
 
-        private IEnumerator Start()
+        private void Awake()
         {
-            yield return new WaitForSeconds(0.5f);
             _dropFactory = DropFactory.Instance;
 
             InitializeBoard();
@@ -36,7 +41,17 @@ namespace GamePlay.Board
                 for (int i = 0; i < Width; i++)
                 {
                     var tile = _dropFactory.GetTile();
-                    tile.Initialize(this, new Vector2(i, j));
+                    tile.Initialize(this, new Vector2Int(i, j));
+                    if (i > 0)
+                    {
+                        tile.SetNeighbour(Neighbour.Left, _tiles[i - 1, j]);
+                        _tiles[i - 1, j].SetNeighbour(Neighbour.Right, tile);
+                    }
+                    if (j > 0)
+                    {
+                        tile.SetNeighbour(Neighbour.Down, _tiles[i, j - 1]);
+                        _tiles[i, j - 1].SetNeighbour(Neighbour.Up, tile);
+                    }
                     _tiles[i, j] = tile;
                 }
             }
@@ -48,19 +63,68 @@ namespace GamePlay.Board
             {
                 for (int i = 0; i < Width; i++)
                 {
-                    var randomColorId = Random.Range(0, 4);
-                    IColor color = randomColorId switch
-                    {
-                        0 => new Red(),
-                        1 => new Green(),
-                        2 => new Blue(),
-                        3 => new Yellow(),
-                    };
-
-                    var drop = _dropFactory.GetColoredDrop(color);
-                    _tiles[i, j].AcceptDrop(drop);
+                    FillTile(_tiles[i, j]);
                 }
             }
+
+            EventManager.Instance.TriggerEvent<BoardFilledInitallyEvent>(new BoardFilledInitallyEvent { Data = Data });
+        }
+
+        private void FillTile(Tile tile)
+        {
+            do
+            {
+                if (tile.CurrentDrop != null)
+                {
+                    tile.CurrentDrop.RemoveSelf();
+                }
+
+                tile.AcceptDrop(GetRandomColoredDrop());
+
+            } while (HasInitialMatch(tile));
+        }
+
+        private bool HasInitialMatch(Tile tile)
+        {
+            if (tile.X > 1)
+            {
+                var firstLeftNeighbour = tile.GetNeighbour(Neighbour.Left);
+                var secondLeftNeighbour = tile.GetNeighbour(Neighbour.Left).GetNeighbour(Neighbour.Left);
+
+                if (firstLeftNeighbour != null && secondLeftNeighbour != null
+                    && firstLeftNeighbour.CurrentDrop.Color.GetType() == tile.CurrentDrop.Color.GetType()
+                    && secondLeftNeighbour.CurrentDrop.Color.GetType() == tile.CurrentDrop.Color.GetType())
+                {
+                    return true;
+                }
+            }
+            if (tile.Y > 1)
+            {
+                var firstDownNeighbour = tile.GetNeighbour(Neighbour.Down);
+                var secondDownNeighbour = tile.GetNeighbour(Neighbour.Down).GetNeighbour(Neighbour.Down);
+                if (firstDownNeighbour != null && secondDownNeighbour != null
+                    && firstDownNeighbour.CurrentDrop.Color.GetType() == tile.CurrentDrop.Color.GetType()
+                    && secondDownNeighbour.CurrentDrop.Color.GetType() == tile.CurrentDrop.Color.GetType())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private Drop GetRandomColoredDrop()
+        {
+            var randomColorId = UnityEngine.Random.Range(0, 4);
+            IColor color = randomColorId switch
+            {
+                0 => new Red(),
+                1 => new Green(),
+                2 => new Blue(),
+                3 => new Yellow(),
+                _ => throw new NullReferenceException($"Requested a color that was out of the scope of 4 possible drops: {randomColorId}")
+            };
+
+            return _dropFactory.GetColoredDrop(color);
         }
     }
 }

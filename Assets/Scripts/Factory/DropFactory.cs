@@ -2,17 +2,20 @@ using GamePlay.Board;
 using GamePlay.Colors;
 using GamePlay.Drops;
 using GamePlay.Visuals;
+using UnityEngine;
 using Utilities;
 
 namespace GamePlay.Factory
 {
+    [DefaultExecutionOrder(-40)]
     public class DropFactory : Singleton<DropFactory>
     {
         private PrefabProvider _prefabProvider;
         private SpriteManager _spriteManager;
 
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
             _prefabProvider = PrefabProvider.Instance;
             _spriteManager = SpriteManager.Instance;
         }

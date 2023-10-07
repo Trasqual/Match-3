@@ -5,6 +5,7 @@ using Utilities;
 
 namespace GamePlay.Visuals
 {
+    [DefaultExecutionOrder(-50)]
     public class SpriteManager : Singleton<SpriteManager>
     {
         [SerializeField] private SpriteAtlas _dropAtlas;

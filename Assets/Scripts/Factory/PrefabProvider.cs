@@ -5,6 +5,7 @@ using Utilities;
 
 namespace GamePlay.Factory
 {
+    [DefaultExecutionOrder(-50)]
     public class PrefabProvider : Singleton<PrefabProvider>
     {
         [field: SerializeField] public Drop DropPrefab { get; private set; }
