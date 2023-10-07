@@ -2,7 +2,9 @@ using GamePlay.Colors;
 using GamePlay.Drops;
 using GamePlay.Events;
 using GamePlay.Factory;
+using GamePlay.SpawnSystem;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GamePlay.Board
@@ -51,6 +53,10 @@ namespace GamePlay.Board
                     {
                         tile.SetNeighbour(Neighbour.Down, _tiles[i, j - 1]);
                         _tiles[i, j - 1].SetNeighbour(Neighbour.Up, tile);
+                    }
+                    if(j == Height - 1)
+                    {
+                        tile.AddSpawner();
                     }
                     _tiles[i, j] = tile;
                 }
