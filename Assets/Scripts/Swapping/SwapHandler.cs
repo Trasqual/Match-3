@@ -19,8 +19,8 @@ public static class SwapHandler
 
         DOVirtual.DelayedCall(0.5f, () =>
         {
-            firstTile.AcceptDropTemproraryForSwap(secondDrop);
-            secondTile.AcceptDropTemproraryForSwap(firstDrop);
+            firstTile.AcceptDropTemprorary(secondDrop);
+            secondTile.AcceptDropTemprorary(firstDrop);
 
             var firstMatchedTiles = new List<Tile>();
             var secondMatchedTiles = new List<Tile>();

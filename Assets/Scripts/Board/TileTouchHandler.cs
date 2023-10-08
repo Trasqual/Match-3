@@ -23,10 +23,6 @@ namespace GamePlay.Board
         {
             if (_tile.CurrentDrop == null) return;
             _isTouched = IsTouched(touchPosition);
-            if (_isTouched)
-            {
-                Debug.Log($"I am touched {_tile.name}");
-            }
         }
 
         private void OnTouchDrag(Vector2Int touchDelta)
@@ -53,7 +49,6 @@ namespace GamePlay.Board
                 swapNeighbour = Neighbour.Down;
             }
             _tile.TrySwap(swapNeighbour);
-            Debug.Log($"I am trying to swap to {swapNeighbour}");
         }
 
         private void OnTouchUp()
@@ -61,8 +56,6 @@ namespace GamePlay.Board
             if (!_isTouched) return;
 
             _isTouched = false;
-
-            Debug.Log($"I am not touched anymore {_tile.name}");
         }
 
         private bool IsTouched(Vector2 touchPosition)

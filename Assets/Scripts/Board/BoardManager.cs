@@ -18,7 +18,7 @@ namespace GamePlay.Board
         public int Width => Data.Width;
         public int Height => Data.Height;
 
-        private Tile[,] _tiles;
+        public Tile[,] Tiles { get; private set; }
 
         private DropFactory _dropFactory;
 
@@ -33,7 +33,7 @@ namespace GamePlay.Board
 
         private void InitializeBoard()
         {
-            _tiles = new Tile[Width, Height];
+            Tiles = new Tile[Width, Height];
         }
 
         private void GenerateBoard()
@@ -46,19 +46,19 @@ namespace GamePlay.Board
                     tile.Initialize(this, new Vector2Int(i, j));
                     if (i > 0)
                     {
-                        tile.SetNeighbour(Neighbour.Left, _tiles[i - 1, j]);
-                        _tiles[i - 1, j].SetNeighbour(Neighbour.Right, tile);
+                        tile.SetNeighbour(Neighbour.Left, Tiles[i - 1, j]);
+                        Tiles[i - 1, j].SetNeighbour(Neighbour.Right, tile);
                     }
                     if (j > 0)
                     {
-                        tile.SetNeighbour(Neighbour.Down, _tiles[i, j - 1]);
-                        _tiles[i, j - 1].SetNeighbour(Neighbour.Up, tile);
+                        tile.SetNeighbour(Neighbour.Down, Tiles[i, j - 1]);
+                        Tiles[i, j - 1].SetNeighbour(Neighbour.Up, tile);
                     }
-                    if(j == Height - 1)
+                    if (j == Height - 1)
                     {
                         tile.AddSpawner();
                     }
-                    _tiles[i, j] = tile;
+                    Tiles[i, j] = tile;
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace GamePlay.Board
             {
                 for (int i = 0; i < Width; i++)
                 {
-                    FillTile(_tiles[i, j]);
+                    FillTile(Tiles[i, j]);
                 }
             }
 

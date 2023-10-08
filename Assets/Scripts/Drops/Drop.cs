@@ -13,11 +13,14 @@ namespace GamePlay.Drops
         public IColor Color { get; private set; }
 
         private Tile _tile;
+        private DropMovementHandler _dropMovementHandler;
 
         public void Initialize(IColor color, Sprite sprite)
         {
             Color = color;
             _rend.sprite = sprite;
+            if (_dropMovementHandler == null)
+                _dropMovementHandler = new DropMovementHandler(this);
         }
 
         public void GetInTile(Tile tile)
@@ -25,6 +28,7 @@ namespace GamePlay.Drops
             _tile = tile;
             transform.SetParent(_tile.transform, false);
             transform.localPosition = Vector3.zero;
+            _dropMovementHandler.UpdateTile(tile);
         }
 
         public void Pop(Action onAnimationEnd)
@@ -40,7 +44,7 @@ namespace GamePlay.Drops
             _tile = null;
             Color = null;
             _rend.sprite = null;
-
+            _dropMovementHandler.Reset();
             Destroy(gameObject);
             //TODO: Add To Pool
         }

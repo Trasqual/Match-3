@@ -1,6 +1,7 @@
 using GamePlay.Drops;
 using GamePlay.SpawnSystem;
 using GamePlay.StateMachine;
+using Main.Gameplay.Core;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,10 +57,23 @@ namespace GamePlay.Board
             }
         }
 
-        public void AcceptDropTemproraryForSwap(Drop drop)
+        public void AcceptDropTemprorary(Drop drop)
         {
             CurrentDrop = drop;
             CurrentDrop?.GetInTile(this);
+        }
+
+        public void AcceptDropFromFall(Drop drop)
+        {
+            AcceptDrop(drop);
+            if (MatchFinder.FindMatches(this, out var tiles))
+            {
+                tiles.Add(this);
+                foreach (var tile in tiles)
+                {
+                    tile.PopDrop();
+                }
+            }
         }
 
         public void GiveDrop()
@@ -84,9 +98,14 @@ namespace GamePlay.Board
             StateManager.ChangeState(typeof(TileIsEmptyState));
         }
 
+        public bool CanGiveDrop()
+        {
+            return StateManager.CurrentState is TileHasDropState or TileIsGivingDropState;
+        }
+
         public bool CanAcceptDrop()
         {
-            return StateManager.CurrentState is TileIsEmptyState;
+            return StateManager.CurrentState is TileIsEmptyState or TileIsRecievingDropState;
         }
 
         public void SetNeighbour(Neighbour side, Tile tile)
