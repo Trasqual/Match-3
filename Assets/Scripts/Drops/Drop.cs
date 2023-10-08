@@ -1,5 +1,7 @@
+using DG.Tweening;
 using GamePlay.Board;
 using GamePlay.Colors;
+using System;
 using UnityEngine;
 
 namespace GamePlay.Drops
@@ -33,6 +35,11 @@ namespace GamePlay.Drops
 
             Destroy(gameObject);
             //TODO: Add To Pool
+        }
+
+        public void PerformSwapTo(Tile tile, float swapDuration)
+        {
+            transform.DOMove(tile.Position, swapDuration);
         }
     }
 }

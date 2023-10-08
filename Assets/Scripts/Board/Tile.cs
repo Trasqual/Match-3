@@ -53,6 +53,12 @@ namespace GamePlay.Board
             StateManager.ChangeState(typeof(TileHasDropState));
         }
 
+        public void AcceptDropTemproraryForSwap(Drop drop)
+        {
+            CurrentDrop = drop;
+            CurrentDrop.GetInTile(this);
+        }
+
         public void GiveDrop()
         {
             StateManager.ChangeState(typeof(TileIsGivingDropState));
@@ -104,10 +110,8 @@ namespace GamePlay.Board
             {
                 if (!neighbourTile.CanSwap()) return;
 
-                //swap drops
-                //check for match
-                //if failed reverseswap
-                //else finishswap
+                StateManager.ChangeState(typeof(TileIsSwappingState));
+                SwapHandler.TrySwap(this, neighbourTile);
             }
         }
 

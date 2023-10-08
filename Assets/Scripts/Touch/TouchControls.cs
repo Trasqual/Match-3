@@ -1,3 +1,4 @@
+using GamePlay.Events;
 using System;
 using UnityEngine;
 
@@ -10,19 +11,43 @@ public class TouchControls : MonoBehaviour
     private Vector2 _touchStart;
     private Vector2Int _swipeDirection;
 
+    private bool _controlEnabled = true;
+
+    private void Awake()
+    {
+        EventManager.Instance.AddListener<BoardFilledInitallyEvent>(OnSwapEnded);
+        EventManager.Instance.AddListener<SwapStartedEvent>(OnSwapStarted);
+        EventManager.Instance.AddListener<SwapEndedEvent>(OnSwapEnded);
+    }
+
+    private void OnSwapStarted(object data)
+    {
+        EnableTouchControls(false);
+    }
+
+    private void OnSwapEnded(object data)
+    {
+        EnableTouchControls(true);
+    }
+
+    private void EnableTouchControls(bool enable)
+    {
+        _controlEnabled = enable;
+    }
+
     private void Update()
     {
 #if !UNITY_EDITOR
         if (Input.touchCount > 0)
         {
             var touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
+            if (touch.phase == TouchPhase.Began && _controlEnabled)
             {
                 _touchStart = touch.position;
                 _swipeDirection = Vector2Int.zero;
                 OnTouchDown?.Invoke(_touchStart);
             }
-            else if (touch.phase == TouchPhase.Moved)
+            else if (touch.phase == TouchPhase.Moved && _controlEnabled)
             {
                 var moveDelta = touch.position - _touchStart;
                 if (moveDelta.magnitude < 20) return;
@@ -60,13 +85,13 @@ public class TouchControls : MonoBehaviour
             }
         }
 #else
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && _controlEnabled)
         {
             _touchStart = Input.mousePosition;
             _swipeDirection = Vector2Int.zero;
             OnTouchDown?.Invoke(_touchStart);
         }
-        else if (Input.GetMouseButton(0))
+        else if (Input.GetMouseButton(0) && _controlEnabled)
         {
             var moveDelta = Input.mousePosition - new Vector3(_touchStart.x, _touchStart.y, 0f);
 
@@ -104,5 +129,12 @@ public class TouchControls : MonoBehaviour
             OnTouchUp?.Invoke();
         }
 #endif
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveListener<BoardFilledInitallyEvent>(OnSwapEnded);
+        EventManager.Instance.RemoveListener<SwapStartedEvent>(OnSwapStarted);
+        EventManager.Instance.RemoveListener<SwapEndedEvent>(OnSwapEnded);
     }
 }

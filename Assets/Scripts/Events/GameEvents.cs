@@ -4,4 +4,14 @@ namespace GamePlay.Events
     {
         public BoardData Data;
     }
+
+    public class SwapStartedEvent
+    {
+
+    }
+
+    public class SwapEndedEvent
+    {
+
+    }
 }
