@@ -25,7 +25,7 @@ namespace GamePlay.StateMachine
         public void ChangeState(Type state)
         {
             if (!HasState(state)) return;
-            if (CurrentState.GetType() == state) return;
+            if (CurrentState?.GetType() == state) return;
 
             CurrentState = _states.FirstOrDefault(x => x.GetType() == state);
 

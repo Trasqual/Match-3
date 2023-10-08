@@ -15,6 +15,7 @@ namespace GamePlay.Board
 
         private BoardManager _board;
         private DropSpawner _spawner;
+        private TileTouchHandler _touchHandler;
 
         private Dictionary<Neighbour, Tile> _neighbours = new();
 
@@ -36,6 +37,8 @@ namespace GamePlay.Board
             StateManager.AddState(new TileIsGivingDropState());
             StateManager.AddState(new TileIsRecievingDropState());
             StateManager.AddState(new TileDropIsPoppingState());
+
+            _touchHandler = new TileTouchHandler(this);
         }
 
         public void AddSpawner()
@@ -91,6 +94,26 @@ namespace GamePlay.Board
         public Tile GetNeighbour(Neighbour side)
         {
             return _neighbours.TryGetValue(side, out var tile) ? tile : null;
+        }
+
+        public void TrySwap(Neighbour neighbour)
+        {
+            if (!CanSwap()) return;
+
+            if (_neighbours.TryGetValue(neighbour, out var neighbourTile))
+            {
+                if (!neighbourTile.CanSwap()) return;
+
+                //swap drops
+                //check for match
+                //if failed reverseswap
+                //else finishswap
+            }
+        }
+
+        public bool CanSwap()
+        {
+            return StateManager.CurrentState is TileHasDropState;
         }
     }
 }

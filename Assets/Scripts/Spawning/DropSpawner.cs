@@ -15,9 +15,10 @@ namespace GamePlay.SpawnSystem
             _dropFactory = DropFactory.Instance;
         }
 
-        public Drop GenerateDrop()
+        public void SpawnDrop()
         {
-            return GetRandomColoredDrop();
+            var drop = GetRandomColoredDrop();
+            drop.transform.position = transform.position + Vector3.up;
         }
 
         private Drop GetRandomColoredDrop()
