@@ -2,9 +2,7 @@ using GamePlay.Colors;
 using GamePlay.Drops;
 using GamePlay.Events;
 using GamePlay.Factory;
-using GamePlay.SpawnSystem;
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GamePlay.Board

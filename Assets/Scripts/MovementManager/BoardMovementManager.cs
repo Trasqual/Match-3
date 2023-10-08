@@ -1,8 +1,10 @@
+using GamePlay.Drops.Movement;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GamePlay.Board
 {
+    [DefaultExecutionOrder(-10)]
     public class BoardMovementManager : MonoBehaviour
     {
         private List<DropMovementHandler> _movementHandlers = new();
@@ -11,6 +13,12 @@ namespace GamePlay.Board
         {
             DropMovementHandler.OnSpawn += AddDrop;
             DropMovementHandler.OnDespawn += RemoveDrop;
+        }
+
+        private void OnDestroy()
+        {
+            DropMovementHandler.OnSpawn -= AddDrop;
+            DropMovementHandler.OnDespawn -= RemoveDrop;
         }
 
         private void AddDrop(DropMovementHandler dropMovementHandler)
