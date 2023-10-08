@@ -49,14 +49,17 @@ namespace GamePlay.Board
         public void AcceptDrop(Drop drop)
         {
             CurrentDrop = drop;
-            CurrentDrop.GetInTile(this);
-            StateManager.ChangeState(typeof(TileHasDropState));
+            if (CurrentDrop != null)
+            {
+                CurrentDrop.GetInTile(this);
+                StateManager.ChangeState(typeof(TileHasDropState));
+            }
         }
 
         public void AcceptDropTemproraryForSwap(Drop drop)
         {
             CurrentDrop = drop;
-            CurrentDrop.GetInTile(this);
+            CurrentDrop?.GetInTile(this);
         }
 
         public void GiveDrop()
@@ -72,17 +75,18 @@ namespace GamePlay.Board
         public void PopDrop()
         {
             StateManager.ChangeState(typeof(TileDropIsPoppingState));
+            CurrentDrop?.Pop(() => ReleaseDrop());
         }
 
         public void ReleaseDrop()
         {
+            CurrentDrop = null;
             StateManager.ChangeState(typeof(TileIsEmptyState));
         }
 
         public bool CanAcceptDrop()
         {
-            //Change to state
-            return CurrentDrop == null;
+            return StateManager.CurrentState is TileIsEmptyState;
         }
 
         public void SetNeighbour(Neighbour side, Tile tile)
@@ -117,7 +121,7 @@ namespace GamePlay.Board
 
         public bool CanSwap()
         {
-            return StateManager.CurrentState is TileHasDropState;
+            return StateManager.CurrentState is TileHasDropState or TileIsEmptyState;
         }
     }
 }

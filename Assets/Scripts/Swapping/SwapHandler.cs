@@ -1,6 +1,8 @@
 using DG.Tweening;
 using GamePlay.Board;
 using GamePlay.Events;
+using Main.Gameplay.Core;
+using System.Collections.Generic;
 
 public static class SwapHandler
 {
@@ -12,27 +14,57 @@ public static class SwapHandler
         var secondDrop = secondTile.CurrentDrop;
 
         firstDrop.PerformSwapTo(secondTile, 0.5f);
-        secondDrop.PerformSwapTo(firstTile, 0.5f);
+        if (secondDrop != null)
+            secondDrop.PerformSwapTo(firstTile, 0.5f);
 
         DOVirtual.DelayedCall(0.5f, () =>
         {
             firstTile.AcceptDropTemproraryForSwap(secondDrop);
             secondTile.AcceptDropTemproraryForSwap(firstDrop);
 
-            //if matched
-            //firstTile.AcceptDrop(secondDrop);
-            //secondTile.AcceptDrop(firstDrop);
-            //EventManager.Instance.TriggerEvent<SwapEndedEvent>();
-            //executegameloop
-            //else
-            firstDrop.PerformSwapTo(firstTile, 0.5f);
-            secondDrop.PerformSwapTo(secondTile, 0.5f);
-            DOVirtual.DelayedCall(0.5f, () =>
+            var firstMatchedTiles = new List<Tile>();
+            var secondMatchedTiles = new List<Tile>();
+
+            var firstHasMatches = MatchFinder.FindMatches(firstTile, out firstMatchedTiles);
+            var secondHasMatches = MatchFinder.FindMatches(secondTile, out secondMatchedTiles);
+
+            if (firstHasMatches || secondHasMatches)
             {
-                firstTile.AcceptDrop(firstDrop);
-                secondTile.AcceptDrop(secondDrop);
+                firstTile.AcceptDrop(secondDrop);
+                secondTile.AcceptDrop(firstDrop);
+
+                if (firstHasMatches)
+                {
+                    firstMatchedTiles.Add(firstTile);
+                    foreach (var tile in firstMatchedTiles)
+                    {
+                        tile.PopDrop();
+                    }
+                }
+
+                if (secondHasMatches)
+                {
+                    secondMatchedTiles.Add(secondTile);
+                    foreach (var tile in secondMatchedTiles)
+                    {
+                        tile.PopDrop();
+                    }
+                }
+
                 EventManager.Instance.TriggerEvent<SwapEndedEvent>();
-            });
+            }
+            else
+            {
+                firstDrop.PerformSwapTo(firstTile, 0.5f);
+                if (secondDrop != null)
+                    secondDrop?.PerformSwapTo(secondTile, 0.5f);
+                DOVirtual.DelayedCall(0.5f, () =>
+                {
+                    firstTile.AcceptDrop(firstDrop);
+                    secondTile.AcceptDrop(secondDrop);
+                    EventManager.Instance.TriggerEvent<SwapEndedEvent>();
+                });
+            }
         });
     }
 }

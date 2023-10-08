@@ -21,6 +21,7 @@ namespace GamePlay.Board
 
         private void OnTouchDown(Vector2 touchPosition)
         {
+            if (_tile.CurrentDrop == null) return;
             _isTouched = IsTouched(touchPosition);
             if (_isTouched)
             {

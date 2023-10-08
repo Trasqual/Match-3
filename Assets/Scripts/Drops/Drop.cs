@@ -27,6 +27,14 @@ namespace GamePlay.Drops
             transform.localPosition = Vector3.zero;
         }
 
+        public void Pop(Action onAnimationEnd)
+        {
+            Sequence s = DOTween.Sequence();
+            s.Append(transform.DOPunchScale(Vector3.one * 1.1f, 0.2f));
+            s.Append(transform.DOScale(Vector3.zero, 0.1f));
+            s.OnComplete(() => onAnimationEnd?.Invoke());
+        }
+
         public void RemoveSelf()
         {
             _tile = null;
