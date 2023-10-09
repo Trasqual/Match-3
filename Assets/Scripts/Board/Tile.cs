@@ -60,12 +60,14 @@ namespace GamePlay.Board
         public void AcceptDropTemprorary(Drop drop)
         {
             CurrentDrop = drop;
-            CurrentDrop?.GetInTile(this);
+            if (CurrentDrop != null)
+                CurrentDrop.GetInTile(this);
         }
 
         public void AcceptDropFromFall(Drop drop)
         {
             AcceptDrop(drop);
+            Debug.Log("Accepted drop from fall");
             if (MatchFinder.FindMatches(this, out var tiles))
             {
                 tiles.Add(this);
@@ -89,7 +91,8 @@ namespace GamePlay.Board
         public void PopDrop()
         {
             StateManager.ChangeState(typeof(TileDropIsPoppingState));
-            CurrentDrop?.Pop(() => ReleaseDrop());
+            if (CurrentDrop != null)
+                CurrentDrop.Pop(() => ReleaseDrop());
         }
 
         public void ReleaseDrop()

@@ -38,43 +38,38 @@ namespace GamePlay.Drops.Movement
         {
             if (_currentTile == null) return;
 
-            if (!_shouldFall && _hasDownNeighbour && _currentTile.StateManager.CurrentState is TileIsRecievingDropState
+            if (!_shouldFall && _hasDownNeighbour && _currentTile.CanGiveDrop()
                 && _currentTile.GetNeighbour(Neighbour.Down).CanAcceptDrop())
             {
                 _target = _currentTile.GetNeighbour(Neighbour.Down).transform;
-                _shouldFall = true;
+                Debug.Log(_target);
                 _currentTile.GiveDrop();
                 _currentTile.GetNeighbour(Neighbour.Down).RecieveDrop();
-                _currentTile.GetNeighbour(Neighbour.Down).AcceptDropTemprorary(_drop);
-            }
-
-            if (_hasDownNeighbour && _currentTile.CanGiveDrop()
-                && _currentTile.GetNeighbour(Neighbour.Down).CanAcceptDrop())
-            {
-                //_currentTile.GiveDrop();
-                _target = _currentTile.GetNeighbour(Neighbour.Down).transform;
                 _shouldFall = true;
-                if (_currentTile.Position.y - _drop.transform.position.y >= 0.2f)
-                {
-                    _currentTile.ReleaseDrop();
-                    _currentTile = _currentTile.GetNeighbour(Neighbour.Down);
-                    _currentTile.GetNeighbour(Neighbour.Down).RecieveDrop();
-                    _currentTile.AcceptDropTemprorary(_drop);
-                }
             }
 
             if (_shouldFall)
             {
-                _frameCount++;
-                _currentSpeed += _acceleration * Mathf.Sqrt(_frameCount);
-                _drop.transform.Translate(Vector3.down * _currentSpeed);
-
-                if (_drop.transform.position.y - _target.position.y <= 0.01f)
+                if (_currentTile.Position.y - _drop.transform.position.y >= 0.2f)
                 {
+                    _currentTile.ReleaseDrop();
+                    _currentTile.GetNeighbour(Neighbour.Down).AcceptDropTemprorary(_drop);
+                }
+
+                _frameCount++;
+                _currentSpeed += _acceleration * Mathf.Sqrt(_frameCount / 10000);
+                _drop.transform.Translate(Vector3.down * _currentSpeed);
+                Debug.Log(_target);
+                if (_drop.transform.position.y - _target.position.y <= 0.03f)
+                {
+                    _target = null;
                     _frameCount = 0;
                     _currentSpeed = _startSpeed;
                     _shouldFall = false;
                     _currentTile.AcceptDropFromFall(_drop);
+                    Debug.Log(_currentTile + " : " + _currentTile.StateManager.CurrentState);
+                    Debug.Log(_currentTile.GetNeighbour(Neighbour.Down) + " : " + _currentTile.GetNeighbour(Neighbour.Down).StateManager.CurrentState);
+                    Debug.Log(_currentTile.GetNeighbour(Neighbour.Up) + " : " + _currentTile.GetNeighbour(Neighbour.Up).StateManager.CurrentState);
                 }
             }
         }
