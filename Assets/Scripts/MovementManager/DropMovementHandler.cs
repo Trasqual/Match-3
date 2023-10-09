@@ -51,15 +51,15 @@ namespace GamePlay.Drops.Movement
             if (_hasDownNeighbour && _currentTile.CanGiveDrop()
                 && _currentTile.GetNeighbour(Neighbour.Down).CanAcceptDrop())
             {
+                //_currentTile.GiveDrop();
                 _target = _currentTile.GetNeighbour(Neighbour.Down).transform;
                 _shouldFall = true;
-                Debug.Log(_currentTile.Position.y - _drop.transform.position.y);
                 if (_currentTile.Position.y - _drop.transform.position.y >= 0.2f)
                 {
-                    _currentTile.GiveDrop();
+                    _currentTile.ReleaseDrop();
                     _currentTile = _currentTile.GetNeighbour(Neighbour.Down);
+                    _currentTile.GetNeighbour(Neighbour.Down).RecieveDrop();
                     _currentTile.AcceptDropTemprorary(_drop);
-                    Debug.Log("Changed tiles");
                 }
             }
 

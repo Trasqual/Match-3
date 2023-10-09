@@ -100,12 +100,12 @@ namespace GamePlay.Board
 
         public bool CanGiveDrop()
         {
-            return StateManager.CurrentState is TileHasDropState or TileIsGivingDropState;
+            return StateManager.CurrentState is TileHasDropState or TileIsRecievingDropState;
         }
 
         public bool CanAcceptDrop()
         {
-            return StateManager.CurrentState is TileIsEmptyState or TileIsRecievingDropState;
+            return StateManager.CurrentState is TileIsEmptyState or TileIsGivingDropState;
         }
 
         public void SetNeighbour(Neighbour side, Tile tile)
