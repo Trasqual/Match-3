@@ -15,8 +15,8 @@ namespace GamePlay.Drops.Movement
         private bool _hasDownNeighbour;
         private bool _shouldFall;
         private int _frameCount;
-        private float _startSpeed = 0.1f;
-        private float _acceleration = 0.01f;
+        private int _startSpeed = 1000;
+        private int _acceleration = 120;
         private float _currentSpeed;
 
         private Transform _target;
@@ -50,26 +50,26 @@ namespace GamePlay.Drops.Movement
 
             if (_shouldFall)
             {
-                if (_currentTile.Position.y - _drop.transform.position.y >= 0.2f)
+                if ((_currentTile.Position.y - _drop.transform.position.y) * 10000 >= 2250)
                 {
                     _currentTile.ReleaseDrop();
                     _currentTile.GetNeighbour(Neighbour.Down).AcceptDropTemprorary(_drop);
                 }
 
                 _frameCount++;
-                _currentSpeed += _acceleration * Mathf.Sqrt(_frameCount / 10000);
-                _drop.transform.Translate(Vector3.down * _currentSpeed);
+                _currentSpeed += _acceleration * Mathf.Sqrt(_frameCount);
+                _drop.transform.Translate(0, -_currentSpeed / 10000, 0);
                 Debug.Log(_target);
-                if (_drop.transform.position.y - _target.position.y <= 0.03f)
+                if ((_drop.transform.position.y - _target.position.y)*10000 <= 128)
                 {
                     _target = null;
                     _frameCount = 0;
                     _currentSpeed = _startSpeed;
                     _shouldFall = false;
                     _currentTile.AcceptDropFromFall(_drop);
-                    Debug.Log(_currentTile + " : " + _currentTile.StateManager.CurrentState);
-                    Debug.Log(_currentTile.GetNeighbour(Neighbour.Down) + " : " + _currentTile.GetNeighbour(Neighbour.Down).StateManager.CurrentState);
-                    Debug.Log(_currentTile.GetNeighbour(Neighbour.Up) + " : " + _currentTile.GetNeighbour(Neighbour.Up).StateManager.CurrentState);
+                    //Debug.Log(_currentTile + " : " + _currentTile.StateManager.CurrentState);
+                    //Debug.Log(_currentTile.GetNeighbour(Neighbour.Down) + " : " + _currentTile.GetNeighbour(Neighbour.Down).StateManager.CurrentState);
+                    //Debug.Log(_currentTile.GetNeighbour(Neighbour.Up) + " : " + _currentTile.GetNeighbour(Neighbour.Up).StateManager.CurrentState);
                 }
             }
         }
