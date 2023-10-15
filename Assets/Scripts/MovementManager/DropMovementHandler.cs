@@ -36,7 +36,7 @@ namespace GamePlay.Drops.Movement
         {
             if (_currentTile == null) return;
 
-            if (_currentTile.CanGiveDrop()
+            if (!_shouldFall && _currentTile.CanGiveDrop()
                 && _currentTile.GetNeighbour(Neighbour.Down) != null && _currentTile.GetNeighbour(Neighbour.Down).CanAcceptDrop())
             {
                 _shouldFall = true;
@@ -46,16 +46,21 @@ namespace GamePlay.Drops.Movement
                 _target = _currentTile.GetNeighbour(Neighbour.Down).transform;
             }
 
-            if (_shouldFall)
+            if (_shouldFall && _currentTile.CanGiveDrop() && _currentTile.GetNeighbour(Neighbour.Down) != null
+                && _currentTile.GetNeighbour(Neighbour.Down).CanAcceptDrop())
             {
-                _currentSpeed += _acceleration * Mathf.Sqrt(_frameCount);
-                _drop.transform.Translate(Vector3.down * _currentSpeed);
-
+                _target = _currentTile.GetNeighbour(Neighbour.Down).transform;
                 if ((_currentTile.Position.y - _drop.transform.position.y) >= 0.4f)
                 {
                     _currentTile.ReleaseDrop();
                     _currentTile.GetNeighbour(Neighbour.Down).AcceptDropTemprorary(_drop);
                 }
+            }
+
+            if (_shouldFall)
+            {
+                _currentSpeed += _acceleration * Mathf.Sqrt(_frameCount);
+                _drop.transform.Translate(Vector3.down * _currentSpeed);
 
                 if ((_drop.transform.position.y - _target.position.y) <= 0.01f)
                 {
