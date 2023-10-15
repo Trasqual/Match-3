@@ -35,7 +35,7 @@ namespace GamePlay.Drops
         public void GetInTileTemprory(Tile tile)
         {
             _tile = tile;
-            transform.SetParent(_tile.transform, false);
+            transform.SetParent(_tile.transform, true);
             _dropMovementHandler.UpdateTile(tile);
         }
 
@@ -47,7 +47,7 @@ namespace GamePlay.Drops
             s.OnComplete(() =>
             {
                 onAnimationEnd?.Invoke();
-                RemoveSelf();
+                //RemoveSelf();
             });
         }
 
@@ -56,7 +56,8 @@ namespace GamePlay.Drops
             _tile = null;
             Color = null;
             _rend.sprite = null;
-            _dropMovementHandler.Reset();
+            _dropMovementHandler?.Reset();
+            transform.DOKill();
             Destroy(gameObject);
             //TODO: Add To Pool
         }
