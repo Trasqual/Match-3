@@ -21,8 +21,9 @@ namespace GamePlay.Board
         private Dictionary<Neighbour, Tile> _neighbours = new();
 
         public StateManager StateManager { get; private set; }
+        public bool HasSpawner { get; private set; }
 
-        public string curState;
+        public string CurrentState;
 
         public void Initialize(BoardManager boardManager, Vector2Int indecies)
         {
@@ -47,6 +48,8 @@ namespace GamePlay.Board
         public void AddSpawner()
         {
             _spawner = gameObject.AddComponent<DropSpawner>();
+            _spawner.Init(this);
+            HasSpawner = true;
         }
 
         public void AcceptDrop(Drop drop)
@@ -101,6 +104,8 @@ namespace GamePlay.Board
         {
             CurrentDrop = null;
             StateManager.ChangeState(typeof(TileIsEmptyState));
+            if (_spawner != null)
+                _spawner.SpawnDrop();
         }
 
         public bool CanGiveDrop()
@@ -150,7 +155,7 @@ namespace GamePlay.Board
 
         private void FixedUpdate()
         {
-            curState = StateManager.CurrentState.ToString();
+            CurrentState = StateManager.CurrentState.ToString();
         }
     }
 }

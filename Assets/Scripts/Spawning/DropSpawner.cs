@@ -1,3 +1,4 @@
+using GamePlay.Board;
 using GamePlay.Colors;
 using GamePlay.Drops;
 using GamePlay.Factory;
@@ -9,16 +10,24 @@ namespace GamePlay.SpawnSystem
     public class DropSpawner : MonoBehaviour
     {
         private DropFactory _dropFactory;
+        private Tile _tile;
 
         private void Awake()
         {
             _dropFactory = DropFactory.Instance;
         }
 
+        public void Init(Tile tile)
+        {
+            _tile = tile;
+        }
+
         public void SpawnDrop()
         {
             var drop = GetRandomColoredDrop();
             drop.transform.position = transform.position + Vector3.up;
+            _tile.RecieveDrop();
+            _tile.AcceptDropTemprorary(drop);
         }
 
         private Drop GetRandomColoredDrop()

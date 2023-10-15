@@ -1,5 +1,4 @@
 using GamePlay.Board;
-using GamePlay.StateMachine;
 using System;
 using UnityEngine;
 
@@ -15,7 +14,7 @@ namespace GamePlay.Drops.Movement
         private bool _shouldFall;
         private int _frameCount;
         private float _startSpeed = 0.1f;
-        private float _acceleration = 0.05f;
+        private float _acceleration = 0.1f;
         private float _currentSpeed;
 
         private Tile _target;
@@ -35,6 +34,12 @@ namespace GamePlay.Drops.Movement
         public void FixedUpdate()
         {
             if (_currentTile == null) return;
+
+            if (!_shouldFall && _currentTile.CanAcceptDrop() && _currentTile.HasSpawner)
+            {
+                _shouldFall = true;
+                _target = _currentTile;
+            }
 
             if (!_shouldFall && _currentTile.CanGiveDrop() && _currentTile.GetNeighbour(Neighbour.Down) != null && _currentTile.GetNeighbour(Neighbour.Down).CanAcceptDrop())
             {
