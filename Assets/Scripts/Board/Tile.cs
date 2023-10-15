@@ -22,6 +22,8 @@ namespace GamePlay.Board
 
         public StateManager StateManager { get; private set; }
 
+        public string curState;
+
         public void Initialize(BoardManager boardManager, Vector2Int indecies)
         {
             _board = boardManager;
@@ -61,13 +63,13 @@ namespace GamePlay.Board
         {
             CurrentDrop = drop;
             if (CurrentDrop != null)
-                CurrentDrop.GetInTile(this);
+                CurrentDrop.GetInTileTemprory(this);
         }
 
         public void AcceptDropFromFall(Drop drop)
         {
             AcceptDrop(drop);
-            Debug.Log("Accepted drop from fall");
+
             if (MatchFinder.FindMatches(this, out var tiles))
             {
                 tiles.Add(this);
@@ -144,6 +146,11 @@ namespace GamePlay.Board
         public bool CanSwap()
         {
             return StateManager.CurrentState is TileHasDropState or TileIsEmptyState;
+        }
+
+        private void FixedUpdate()
+        {
+            curState = StateManager.CurrentState.ToString();
         }
     }
 }

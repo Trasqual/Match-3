@@ -32,12 +32,23 @@ namespace GamePlay.Drops
             _dropMovementHandler.UpdateTile(tile);
         }
 
+        public void GetInTileTemprory(Tile tile)
+        {
+            _tile = tile;
+            transform.SetParent(_tile.transform, false);
+            _dropMovementHandler.UpdateTile(tile);
+        }
+
         public void Pop(Action onAnimationEnd)
         {
             Sequence s = DOTween.Sequence();
-            s.Append(transform.DOPunchScale(Vector3.one * 1.1f, 0.2f));
+            s.Append(transform.DOPunchScale(Vector3.one * 1.05f, 0.2f));
             s.Append(transform.DOScale(Vector3.zero, 0.1f));
-            s.OnComplete(() => onAnimationEnd?.Invoke());
+            s.OnComplete(() =>
+            {
+                onAnimationEnd?.Invoke();
+                RemoveSelf();
+            });
         }
 
         public void RemoveSelf()
