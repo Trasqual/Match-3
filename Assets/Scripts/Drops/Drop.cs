@@ -47,7 +47,7 @@ namespace GamePlay.Drops
             s.OnComplete(() =>
             {
                 onAnimationEnd?.Invoke();
-                //RemoveSelf();
+                RemoveSelf();
             });
         }
 
