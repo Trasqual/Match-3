@@ -1,4 +1,5 @@
 using GamePlay.Board;
+using GamePlay.StateMachine;
 using System.Collections.Generic;
 
 namespace Main.Gameplay.Core
@@ -103,10 +104,13 @@ namespace Main.Gameplay.Core
             var neighbour = tile.GetNeighbour(direction);
             if (neighbour)
             {
-                if (tile.CurrentDrop != null && neighbour.CurrentDrop != null && neighbour.CurrentDrop.Color.GetType() == tile.CurrentDrop.Color.GetType())
+                if (tile.StateManager.CurrentState is TileHasDropState && neighbour.StateManager.CurrentState is TileHasDropState)
                 {
-                    matchingTile = neighbour;
-                    return true;
+                    if (tile.CurrentDrop != null && neighbour.CurrentDrop != null && neighbour.CurrentDrop.Color.GetType() == tile.CurrentDrop.Color.GetType())
+                    {
+                        matchingTile = neighbour;
+                        return true;
+                    }
                 }
             }
             matchingTile = null;

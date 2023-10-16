@@ -63,8 +63,8 @@ public static class SwapHandler
                     firstTile.AcceptDrop(firstDrop);
                     secondTile.AcceptDrop(secondDrop);
                     EventManager.Instance.TriggerEvent<SwapEndedEvent>();
-                });
+                }).SetUpdate(false);
             }
-        });
+        }).SetUpdate(false);
     }
 }
