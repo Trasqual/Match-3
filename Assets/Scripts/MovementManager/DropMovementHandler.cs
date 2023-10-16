@@ -15,7 +15,7 @@ namespace GamePlay.Drops.Movement
         private bool _shouldFall;
         private int _frameCount;
         private float _startSpeed = 0.1f;
-        private float _acceleration = 0.03f;
+        private float _acceleration = 0.01f;
         private float _currentSpeed;
 
         private Tile _target;
