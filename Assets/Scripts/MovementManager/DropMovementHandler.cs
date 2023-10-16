@@ -25,7 +25,6 @@ namespace GamePlay.Drops.Movement
             _drop = drop;
             OnSpawn?.Invoke(this);
             _currentSpeed = _startSpeed;
-            Time.timeScale = 0.2f;
         }
 
         public void UpdateTile(Tile tile)
