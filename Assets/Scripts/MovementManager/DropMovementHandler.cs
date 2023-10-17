@@ -15,7 +15,7 @@ namespace GamePlay.Drops.Movement
         private bool _shouldFall;
         private int _frameCount;
         private float _startSpeed = 0.1f;
-        private float _acceleration = 0.01f;
+        private float _acceleration = 0.1f;
         private float _currentSpeed;
 
         private Tile _target;
@@ -66,6 +66,8 @@ namespace GamePlay.Drops.Movement
                     if (_currentTile.CanGiveDrop() && _currentTile.GetNeighbour(Neighbour.Down) != null && _currentTile.GetNeighbour(Neighbour.Down).CanAcceptDrop())
                     {
                         _target = _currentTile.GetNeighbour(Neighbour.Down);
+                        _currentTile.GiveDrop();
+                        _currentTile.GetNeighbour(Neighbour.Down).RecieveDrop();
                     }
                     else
                     {
